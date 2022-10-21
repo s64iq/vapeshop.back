@@ -63,119 +63,59 @@ public class Liquid {
         return url1;
     }
 
-    public void setUrl1(String url1) {
-        this.url1 = url1;
-    }
-
     public String getUrl2() {
         return url2;
-    }
-
-    public void setUrl2(String url2) {
-        this.url2 = url2;
     }
 
     public String getUrl3() {
         return url3;
     }
 
-    public void setUrl3(String url3) {
-        this.url3 = url3;
-    }
-
     public String getUrl4() {
         return url4;
-    }
-
-    public void setUrl4(String url4) {
-        this.url4 = url4;
     }
 
     public String getUrl5() {
         return url5;
     }
 
-    public void setUrl5(String url5) {
-        this.url5 = url5;
-    }
-
     public String getUrl6() {
         return url6;
-    }
-
-    public void setUrl6(String url6) {
-        this.url6 = url6;
     }
 
     public String getUrl7() {
         return url7;
     }
 
-    public void setUrl7(String url7) {
-        this.url7 = url7;
-    }
-
     public String getUrl8() {
         return url8;
-    }
-
-    public void setUrl8(String url8) {
-        this.url8 = url8;
     }
 
     public String getUrl9() {
         return url9;
     }
 
-    public void setUrl9(String url9) {
-        this.url9 = url9;
-    }
-
     public String getUrl10() {
         return url10;
-    }
-
-    public void setUrl10(String url10) {
-        this.url10 = url10;
     }
 
     public String getUrl11() {
         return url11;
     }
 
-    public void setUrl11(String url11) {
-        this.url11 = url11;
-    }
-
     public String getUrl12() {
         return url12;
-    }
-
-    public void setUrl12(String url12) {
-        this.url12 = url12;
     }
 
     public String getUrl13() {
         return url13;
     }
 
-    public void setUrl13(String url13) {
-        this.url13 = url13;
-    }
-
     public String getUrl14() {
         return url14;
     }
 
-    public void setUrl14(String url14) {
-        this.url14 = url14;
-    }
-
     public String getUrl15() {
         return url15;
-    }
-
-    public void setUrl15(String url15) {
-        this.url15 = url15;
     }
 }
