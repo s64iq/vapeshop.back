@@ -1,8 +1,6 @@
-package main.controllers.datacontroller;
+package main.controllers.Data;
 
-import main.model.data.components.Components;
-import main.model.data.mods.Mods;
-import main.model.data.vape.Vape;
+import main.model.Data.Mods;
 import main.repository.datarepository.ModsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,99 +23,99 @@ public class ModsController {
     private int size;
 
     @GetMapping("/low-high/mods/")
-    public List<Mods> getDataInFilteredListByLowToHighAndSize() {
+    public List<Mods> getDataLowToHighFilter() {
         Iterable<Mods> modsIterable = modsRepository.findAll();
 
-        List<Mods> unsortedMods = new ArrayList<>();
+        List<Mods> unsortedModArray = new ArrayList<>();
         for(Mods mod : modsIterable) {
             if(filter != null &&mod.getPriceDouble() >= Double.parseDouble(filter.split(";")[0])
                               &&mod.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])) {
-                unsortedMods.add(mod);
+                unsortedModArray.add(mod);
             }
             if(filter == null) {
-                unsortedMods.add(mod);
+                unsortedModArray.add(mod);
             }
         }
-        size = unsortedMods.size();
-        unsortedMods.sort(Comparator.comparing(Mods::getPriceDouble));
+        size = unsortedModArray.size();
+        unsortedModArray.sort(Comparator.comparing(Mods::getPriceDouble));
 
-        List<Mods> mods = new ArrayList<>();
+        List<Mods> modArray = new ArrayList<>();
         int i = 0;
-        for(Mods mod : unsortedMods) {
+        for(Mods mod : unsortedModArray) {
             i++;
             if(i >= page-99&&i <= page) {
-                mods.add(mod);
+                modArray.add(mod);
             }
         }
-        return mods;
+        return modArray;
     }
 
     @GetMapping("/high-low/mods/")
-    public List<Mods> getDataInFilteredListByHighToLowAndSize() {
+    public List<Mods> getDataHighToLowFilter() {
         Iterable<Mods> modsIterable = modsRepository.findAll();
 
-        List<Mods> unsortedMods = new ArrayList<>();
+        List<Mods> unsortedModArray = new ArrayList<>();
         for(Mods mod : modsIterable) {
             if(filter != null &&mod.getPriceDouble() >= Double.parseDouble(filter.split(";")[0])
                               &&mod.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])) {
-                unsortedMods.add(mod);
+                unsortedModArray.add(mod);
             }
             if(filter == null) {
-                unsortedMods.add(mod);
+                unsortedModArray.add(mod);
             }
         }
-        size = unsortedMods.size();
-        unsortedMods.sort(Comparator.comparing(Mods::getPriceDouble).reversed());
+        size = unsortedModArray.size();
+        unsortedModArray.sort(Comparator.comparing(Mods::getPriceDouble).reversed());
 
-        List<Mods> mods = new ArrayList<>();
+        List<Mods> modArray = new ArrayList<>();
         int i = 0;
-        for(Mods mod : unsortedMods) {
+        for(Mods mod : unsortedModArray) {
             i++;
             if(i >= page-99&&i <= page) {
-                mods.add(mod);
+                modArray.add(mod);
             }
         }
-        return mods;
+        return modArray;
     }
 
     @GetMapping("/default/mods/")
-    public List<Mods> getDataInFilteredListByDefaultAndSize() {
+    public List<Mods> getDataDefaultFilter() {
         Iterable<Mods> modsIterable = modsRepository.findAll();
 
-        List<Mods> unsortedMods = new ArrayList<>();
+        List<Mods> unsortedModArray = new ArrayList<>();
         for(Mods mod : modsIterable) {
             if(filter != null &&mod.getPriceDouble() >= Double.parseDouble(filter.split(";")[0])
                               &&mod.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])) {
-                unsortedMods.add(mod);
+                unsortedModArray.add(mod);
             }
             if(filter == null) {
-                unsortedMods.add(mod);
+                unsortedModArray.add(mod);
             }
         }
-        size = unsortedMods.size();
+        size = unsortedModArray.size();
 
-        List<Mods> mods = new ArrayList<>();
+        List<Mods> modArray = new ArrayList<>();
         int i = 0;
-        for(Mods mod : unsortedMods) {
+        for(Mods mod : unsortedModArray) {
             i++;
             if(i >= page-99&&i <= page) {
-                mods.add(mod);
+                modArray.add(mod);
             }
         }
-        return mods;
+        return modArray;
     }
 
     @GetMapping("/mods/price-range/")
     public String getPriceRange(String priceFilterRange) {
         Iterable<Mods> modsIterable = modsRepository.findAll();
 
-        List<Mods> unsortedMods = new ArrayList<>();
+        List<Mods> unsortedModArray = new ArrayList<>();
         for(Mods mod : modsIterable) {
-            unsortedMods.add(mod);
+            unsortedModArray.add(mod);
         }
 
-        priceFilterRange = unsortedMods.stream().min(Comparator.comparing(Mods::getPriceDouble)).get().getPriceDouble() + ";" +
-                           unsortedMods.stream().max(Comparator.comparing(Mods::getPriceDouble)).get().getPriceDouble();
+        priceFilterRange = unsortedModArray.stream().min(Comparator.comparing(Mods::getPriceDouble)).get().getPriceDouble() + ";" +
+                           unsortedModArray.stream().max(Comparator.comparing(Mods::getPriceDouble)).get().getPriceDouble();
 
         return priceFilterRange;
     }

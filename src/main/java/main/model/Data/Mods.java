@@ -1,4 +1,4 @@
-package main.model.data.mods;
+package main.model.Data;
 
 import javax.persistence.*;
 

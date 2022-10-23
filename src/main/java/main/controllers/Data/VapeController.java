@@ -1,6 +1,6 @@
-package main.controllers.datacontroller;
+package main.controllers.Data;
 
-import main.model.data.vape.Vape;
+import main.model.Data.Vape;
 import main.repository.datarepository.VapeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,105 +14,105 @@ import java.util.List;
 public class VapeController {
 
     @Autowired
-    private VapeRepository vapesRepository;
+    private VapeRepository vapeRepository;
     private int page;
     private String filter;
     private int size;
 
     @GetMapping("/low-high/vapes/")
-    public List<Vape> getDataInFilteredListByLowToHighAndSize() {
-        Iterable<Vape> vapesIterable = vapesRepository.findAll();
+    public List<Vape> getDataLowToHighFilter() {
+        Iterable<Vape> vapesIterable = vapeRepository.findAll();
 
-        List<Vape> unsortedVapes = new ArrayList<>();
+        List<Vape> unsortedVapeArray = new ArrayList<>();
         for(Vape vape : vapesIterable) {
             if(filter != null &&vape.getPriceDouble() >= Double.parseDouble(filter.split(";")[0])
                               &&vape.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])) {
-                unsortedVapes.add(vape);
+                unsortedVapeArray.add(vape);
             }
             if(filter == null) {
-                unsortedVapes.add(vape);
+                unsortedVapeArray.add(vape);
             }
         }
-        size = unsortedVapes.size();
-        unsortedVapes.sort(Comparator.comparing(Vape::getPriceDouble));
+        size = unsortedVapeArray.size();
+        unsortedVapeArray.sort(Comparator.comparing(Vape::getPriceDouble));
 
-        List<Vape> vapes = new ArrayList<>();
+        List<Vape> vapeArray = new ArrayList<>();
         int i = 0;
-        for(Vape vape : unsortedVapes) {
+        for(Vape vape : unsortedVapeArray) {
             i++;
             if(i >= page-99&&i <= page) {
-                vapes.add(vape);
+                vapeArray.add(vape);
             }
         }
-        return vapes;
+        return vapeArray;
     }
 
     @GetMapping("/high-low/vapes/")
-    public List<Vape> getDataInFilteredListByHighToLowAndSize() {
-        Iterable<Vape> vapesIterable = vapesRepository.findAll();
+    public List<Vape> getDataHighToLowFilter() {
+        Iterable<Vape> vapesIterable = vapeRepository.findAll();
 
-        List<Vape> unsortedVapes = new ArrayList<>();
+        List<Vape> unsortedVapeArray = new ArrayList<>();
         for(Vape vape : vapesIterable) {
             if(filter != null &&vape.getPriceDouble() >= Double.parseDouble(filter.split(";")[0])
                               &&vape.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])) {
-                unsortedVapes.add(vape);
+                unsortedVapeArray.add(vape);
             }
             if(filter == null) {
-                unsortedVapes.add(vape);
+                unsortedVapeArray.add(vape);
             }
         }
-        size = unsortedVapes.size();
-        unsortedVapes.sort(Comparator.comparing(Vape::getPriceDouble).reversed());
+        size = unsortedVapeArray.size();
+        unsortedVapeArray.sort(Comparator.comparing(Vape::getPriceDouble).reversed());
 
-        List<Vape> vapes = new ArrayList<>();
+        List<Vape> vapeArray = new ArrayList<>();
         int i = 0;
-        for(Vape vape : unsortedVapes) {
+        for(Vape vape : unsortedVapeArray) {
             i++;
             if(i >= page-99&&i <= page) {
-                vapes.add(vape);
+                vapeArray.add(vape);
             }
         }
-        return vapes;
+        return vapeArray;
     }
 
     @GetMapping("/default/vapes/")
-    public List<Vape> getDataInFilteredListByDefaultAndSize() {
-        Iterable<Vape> vapesIterable = vapesRepository.findAll();
+    public List<Vape> getDataDefaultFilter() {
+        Iterable<Vape> vapesIterable = vapeRepository.findAll();
 
-        List<Vape> unsortedVapes = new ArrayList<>();
+        List<Vape> unsortedVapeArray = new ArrayList<>();
         for(Vape vape : vapesIterable) {
             if(filter != null &&vape.getPriceDouble() >= Double.parseDouble(filter.split(";")[0])
                               &&vape.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])) {
-                unsortedVapes.add(vape);
+                unsortedVapeArray.add(vape);
             }
             if(filter == null) {
-                unsortedVapes.add(vape);
+                unsortedVapeArray.add(vape);
             }
         }
-        size = unsortedVapes.size();
+        size = unsortedVapeArray.size();
 
-        List<Vape> vapes = new ArrayList<>();
+        List<Vape> vapeArray = new ArrayList<>();
         int i = 0;
-        for(Vape vape : unsortedVapes) {
+        for(Vape vape : unsortedVapeArray) {
             i++;
             if(i >= page-99&&i <= page) {
-                vapes.add(vape);
+                vapeArray.add(vape);
             }
         }
-        return vapes;
+        return vapeArray;
     }
 
     @GetMapping("/vapes/price-range/")
     public String getPriceRange(String priceFilterRange) {
-        Iterable<Vape> vapesIterable = vapesRepository.findAll();
+        Iterable<Vape> vapesIterable = vapeRepository.findAll();
 
-        List<Vape> unsortedVapes = new ArrayList<>();
+        List<Vape> unsortedVapeArray = new ArrayList<>();
         for(Vape vape : vapesIterable) {
-            unsortedVapes.add(vape);
+            unsortedVapeArray.add(vape);
         }
 
-        priceFilterRange = unsortedVapes.stream().min(Comparator.comparing(Vape::getPriceDouble)).get().getPriceDouble() + ";" +
-                           unsortedVapes.stream().max(Comparator.comparing(Vape::getPriceDouble)).get().getPriceDouble();
+        priceFilterRange = unsortedVapeArray.stream().min(Comparator.comparing(Vape::getPriceDouble)).get().getPriceDouble() + ";" +
+                           unsortedVapeArray.stream().max(Comparator.comparing(Vape::getPriceDouble)).get().getPriceDouble();
 
         return priceFilterRange;
     }

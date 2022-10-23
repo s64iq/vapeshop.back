@@ -1,6 +1,6 @@
 package main.repository.datarepository;
 
-import main.model.data.vape.Vape;
+import main.model.Data.Vape;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

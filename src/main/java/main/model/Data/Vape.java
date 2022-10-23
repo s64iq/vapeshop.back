@@ -1,10 +1,10 @@
-package main.model.data.liquid;
+package main.model.Data;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "liquid")
-public class Liquid {
+@Table(name = "vape")
+public class Vape {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +29,26 @@ public class Liquid {
     private String url13;
     private String url14;
     private String url15;
+    private String url16;
+    private String url17;
+    private String url18;
+    private String url19;
+    private String url20;
+    private String url21;
+    private String url22;
+    private String url23;
+    private String url24;
+    private String url25;
+    private String url26;
+
+    private String xark1;
+    private String xark2;
+    private String xark3;
+    private String xark4;
+    private String xark5;
+
+    private String comp1;
+    private String comp2;
 
     public int getId() {
         return id;
@@ -51,7 +71,7 @@ public class Liquid {
     }
 
     public Double getPriceDouble() {
-        String stringPrice = getPrice() + ".0";
+        String stringPrice = getPrice().replaceAll(" ", "").replaceAll(",",".");
         return Double.parseDouble(stringPrice);
     }
 
@@ -117,5 +137,77 @@ public class Liquid {
 
     public String getUrl15() {
         return url15;
+    }
+
+    public String getUrl16() {
+        return url16;
+    }
+
+    public String getUrl17() {
+        return url17;
+    }
+
+    public String getUrl18() {
+        return url18;
+    }
+
+    public String getUrl19() {
+        return url19;
+    }
+
+    public String getUrl20() {
+        return url20;
+    }
+
+    public String getUrl21() {
+        return url21;
+    }
+
+    public String getUrl22() {
+        return url22;
+    }
+
+    public String getUrl23() {
+        return url23;
+    }
+
+    public String getUrl24() {
+        return url24;
+    }
+
+    public String getUrl25() {
+        return url25;
+    }
+
+    public String getUrl26() {
+        return url26;
+    }
+
+    public String getXark1() {
+        return xark1;
+    }
+
+    public String getXark2() {
+        return xark2;
+    }
+
+    public String getXark3() {
+        return xark3;
+    }
+
+    public String getXark4() {
+        return xark4;
+    }
+
+    public String getXark5() {
+        return xark5;
+    }
+
+    public String getComp1() {
+        return comp1;
+    }
+
+    public String getComp2() {
+        return comp2;
     }
 }

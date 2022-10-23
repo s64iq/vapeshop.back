@@ -1,8 +1,6 @@
-package main.controllers.datacontroller;
+package main.controllers.Data;
 
-import main.model.data.liquid.Liquid;
-import main.model.data.mods.Mods;
-import main.model.data.vape.Vape;
+import main.model.Data.Liquid;
 import main.repository.datarepository.LiquidRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,22 +21,8 @@ public class LiquidController {
 
     private int size;
 
-    /*@GetMapping("/liquid/")
-    public List<Liquid> list() {
-        int i = 0;
-        Iterable<Liquid> liquidIterable = liquidsRepository.findAll();
-        List<Liquid> liquid = new ArrayList<>();
-        for(Liquid liquid1 : liquidIterable) {
-            i++;
-            if(i >= page-99&&i <= page) {
-                liquid.add(liquid1);
-            }
-        }
-        return liquid;
-    }*/
-
     @GetMapping("/low-high/liquids/")
-    public List<Liquid> getDataInFilteredListByLowToHighAndSize() {
+    public List<Liquid> getDataLowToHighFilter() {
         Iterable<Liquid> liquidsIterable = liquidsRepository.findAll();
 
         List<Liquid> unsortedLiquids = new ArrayList<>();
@@ -66,7 +50,7 @@ public class LiquidController {
     }
 
     @GetMapping("/high-low/liquids/")
-    public List<Liquid> getDataInFilteredListByHighToLowAndSize() {
+    public List<Liquid> getDataHighToLowFilter() {
         Iterable<Liquid> liquidsIterable = liquidsRepository.findAll();
 
         List<Liquid> unsortedLiquids = new ArrayList<>();
@@ -94,54 +78,54 @@ public class LiquidController {
     }
 
     @GetMapping("/default/liquids/")
-    public List<Liquid> getDataInFilteredListByDefaultAndSize() {
+    public List<Liquid> getDataDefaultFilter() {
         Iterable<Liquid> liquidsIterable = liquidsRepository.findAll();
 
-        List<Liquid> unsortedLiquids = new ArrayList<>();
+        List<Liquid> unsortedLiquidArray = new ArrayList<>();
         for(Liquid liquid : liquidsIterable) {
             if(filter != null &&liquid.getPriceDouble() >= Double.parseDouble(filter.split(";")[0])
-                    &&liquid.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])) {
-                unsortedLiquids.add(liquid);
+                              &&liquid.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])) {
+                unsortedLiquidArray.add(liquid);
             }
             if(filter == null) {
-                unsortedLiquids.add(liquid);
+                unsortedLiquidArray.add(liquid);
             }
         }
-        size = unsortedLiquids.size();
+        size = unsortedLiquidArray.size();
 
-        List<Liquid> liquids = new ArrayList<>();
+        List<Liquid> liquidArray = new ArrayList<>();
         int i = 0;
-        for(Liquid liquid : unsortedLiquids) {
+        for(Liquid liquid : unsortedLiquidArray) {
             i++;
             if(i >= page-99&&i <= page) {
-                liquids.add(liquid);
+                liquidArray.add(liquid);
             }
         }
-        return liquids;
+        return liquidArray;
     }
 
     @GetMapping("/liquids/price-range/")
-    public String getPriceRange(String priceFilterRange) {
+    public String getPriceRange(String priceRange) {
         Iterable<Liquid> liquidsIterable = liquidsRepository.findAll();
 
-        List<Liquid> unsortedLiquids = new ArrayList<>();
+        List<Liquid> unsortedLiquidArray = new ArrayList<>();
         for(Liquid liquid : liquidsIterable) {
-            unsortedLiquids.add(liquid);
+            unsortedLiquidArray.add(liquid);
         }
 
-        priceFilterRange = unsortedLiquids.stream().min(Comparator.comparing(Liquid::getPriceDouble)).get().getPriceDouble() + ";" +
-                           unsortedLiquids.stream().max(Comparator.comparing(Liquid::getPriceDouble)).get().getPriceDouble();
+        priceRange = unsortedLiquidArray.stream().min(Comparator.comparing(Liquid::getPriceDouble)).get().getPriceDouble() + ";" +
+                     unsortedLiquidArray.stream().max(Comparator.comparing(Liquid::getPriceDouble)).get().getPriceDouble();
 
-        return priceFilterRange;
+        return priceRange;
     }
 
     @GetMapping("/liquids/filter-low/length/")
-    public long getSizeMinFilter() {
+    public long getSizeLowFilter() {
         return size;
     }
 
     @GetMapping("/liquids/filter-high/length/")
-    public long getSizeMaxFilter() {
+    public long getSizeHighFilter() {
         return size;
     }
 
@@ -151,7 +135,7 @@ public class LiquidController {
     }
 
     @PostMapping("/liquids/page/")
-    public void setCurrentPage(@RequestHeader("page") int page) {
+    public void setPage(@RequestHeader("page") int page) {
         this.page = page;
     }
 
