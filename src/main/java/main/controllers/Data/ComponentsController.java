@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -23,100 +24,119 @@ public class ComponentsController {
     @GetMapping("/low-high/components/")
     public List<Components> getDataLowToHighFilter() {
         Iterable<Components> componentsIterable = componentsRepository.findAll();
-
         List<Components> unsortedComponentArray = new ArrayList<>();
-        for(Components component : componentsIterable) {
-            if(filter != null &&component.getPriceDouble() >= Double.parseDouble(filter.split(";")[0])
-                              &&component.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])) {
-                unsortedComponentArray.add(component);
-            }
-            if(filter == null) {
-                unsortedComponentArray.add(component);
-            }
+
+        componentsIterable.iterator().forEachRemaining(unsortedComponentArray::add);
+
+        if(filter != null) {
+            unsortedComponentArray = unsortedComponentArray.stream().filter(component ->
+                    component.getPriceDouble() >= Double.parseDouble(filter.split(";")[0]) &&
+                    component.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])).collect(Collectors.toList());
         }
 
         size = unsortedComponentArray.size();
         unsortedComponentArray.sort(Comparator.comparing(Components::getPriceDouble));
 
         List<Components> componentArray = new ArrayList<>();
-        int i = 0;
-        for(Components component : unsortedComponentArray) {
-            i++;
-            if(i >= page-99&&i <= page) {
-                componentArray.add(component);
+        if(page < size) {
+            for(int i = page-99;i >= page-99&&i <= page;i++) {
+                componentArray.add(unsortedComponentArray.get(i));
+            }
+        } else {
+            if(size-99 > 0) {
+                for(int i = size-99;i >= size-99&&i < size;i++) {
+                    componentArray.add(unsortedComponentArray.get(i));
+                }
+            } else {
+                for(int i = 0;i >= 0&&i < size;i++) {
+                    componentArray.add(unsortedComponentArray.get(i));
+                }
             }
         }
+
         return componentArray;
     }
 
     @GetMapping("/high-low/components/")
     public List<Components> getDataHighToLowFilter() {
         Iterable<Components> componentsIterable = componentsRepository.findAll();
-
         List<Components> unsortedComponentArray = new ArrayList<>();
-        for(Components component : componentsIterable) {
-            if(filter != null &&component.getPriceDouble() >= Double.parseDouble(filter.split(";")[0])
-                              &&component.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])) {
-                unsortedComponentArray.add(component);
-            }
-            if(filter == null) {
-                unsortedComponentArray.add(component);
-            }
+
+        componentsIterable.iterator().forEachRemaining(unsortedComponentArray::add);
+
+        if(filter != null) {
+            unsortedComponentArray = unsortedComponentArray.stream().filter(component ->
+                    component.getPriceDouble() >= Double.parseDouble(filter.split(";")[0]) &&
+                    component.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])).collect(Collectors.toList());
         }
+
         size = unsortedComponentArray.size();
         unsortedComponentArray.sort(Comparator.comparing(Components::getPriceDouble).reversed());
 
         List<Components> componentArray = new ArrayList<>();
-        int i = 0;
-        for(Components component : unsortedComponentArray) {
-            i++;
-            if(i >= page-99&&i <= page) {
-                componentArray.add(component);
+        if(page < size) {
+            for(int i = page-99;i >= page-99&&i <= page;i++) {
+                componentArray.add(unsortedComponentArray.get(i));
+            }
+        } else {
+            if(size-99 > 0) {
+                for(int i = size-99;i >= size-99&&i < size;i++) {
+                    componentArray.add(unsortedComponentArray.get(i));
+                }
+            } else {
+                for(int i = 0;i >= 0&&i < size;i++) {
+                    componentArray.add(unsortedComponentArray.get(i));
+                }
             }
         }
+
         return componentArray;
     }
 
     @GetMapping("/default/components/")
     public List<Components> getDataDefaultFilter() {
         Iterable<Components> componentsIterable = componentsRepository.findAll();
-
         List<Components> unsortedComponentArray = new ArrayList<>();
-        for(Components component : componentsIterable) {
-            if(filter != null &&component.getPriceDouble() >= Double.parseDouble(filter.split(";")[0])
-                              &&component.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])) {
-                unsortedComponentArray.add(component);
-            }
-            if(filter == null) {
-                unsortedComponentArray.add(component);
-            }
+
+        componentsIterable.iterator().forEachRemaining(unsortedComponentArray::add);
+
+        if(filter != null) {
+            unsortedComponentArray = unsortedComponentArray.stream().filter(component ->
+                    component.getPriceDouble() >= Double.parseDouble(filter.split(";")[0]) &&
+                    component.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])).collect(Collectors.toList());
         }
+
         size = unsortedComponentArray.size();
 
         List<Components> componentArray = new ArrayList<>();
-        int i = 0;
-        for(Components component : unsortedComponentArray) {
-            i++;
-            if(i >= page-99&&i <= page) {
-                componentArray.add(component);
+        if(page < size) {
+            for(int i = page-99;i >= page-99&&i <= page;i++) {
+                componentArray.add(unsortedComponentArray.get(i));
+            }
+        } else {
+            if(size-99 > 0) {
+                for(int i = size-99;i >= size-99&&i < size;i++) {
+                    componentArray.add(unsortedComponentArray.get(i));
+                }
+            } else {
+                for(int i = 0;i >= 0&&i < size;i++) {
+                    componentArray.add(unsortedComponentArray.get(i));
+                }
             }
         }
+
         return componentArray;
     }
 
     @GetMapping("/components/price-range/")
-    public String getPriceRange(String priceFilterRange) {
+    public String getPriceRange() {
         Iterable<Components> componentsIterable = componentsRepository.findAll();
-
         List<Components> unsortedComponentArray = new ArrayList<>();
-        for(Components component : componentsIterable) {
-            unsortedComponentArray.add(component);
-        }
 
-        priceFilterRange = unsortedComponentArray.stream().min(Comparator.comparing(Components::getPriceDouble)).get().getPriceDouble() + ";" +
-                           unsortedComponentArray.stream().max(Comparator.comparing(Components::getPriceDouble)).get().getPriceDouble();
+        componentsIterable.iterator().forEachRemaining(unsortedComponentArray::add);
 
-        return priceFilterRange;
+        return unsortedComponentArray.stream().min(Comparator.comparing(Components::getPriceDouble)).get().getPriceDouble() + ";" +
+                unsortedComponentArray.stream().max(Comparator.comparing(Components::getPriceDouble)).get().getPriceDouble();
     }
 
     @GetMapping("/components/filter-low/length/")
@@ -136,7 +156,7 @@ public class ComponentsController {
 
     @PostMapping("/components/page/")
     public void setCurrentPage(@RequestHeader("page") int page) {
-        this.page = page;
+        this.page = page * 100;
     }
 
     @PostMapping("/components/filter/")

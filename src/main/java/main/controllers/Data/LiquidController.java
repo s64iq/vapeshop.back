@@ -1,5 +1,6 @@
 package main.controllers.Data;
 
+import main.model.Data.Components;
 import main.model.Data.Liquid;
 import main.repository.datarepository.LiquidRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -24,99 +26,121 @@ public class LiquidController {
     @GetMapping("/low-high/liquids/")
     public List<Liquid> getDataLowToHighFilter() {
         Iterable<Liquid> liquidsIterable = liquidsRepository.findAll();
+        List<Liquid> unsortedLiquidArray = new ArrayList<>();
 
-        List<Liquid> unsortedLiquids = new ArrayList<>();
-        for(Liquid liquid : liquidsIterable) {
-            if(filter != null &&liquid.getPriceDouble() >= Double.parseDouble(filter.split(";")[0])
-                              &&liquid.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])) {
-                unsortedLiquids.add(liquid);
+        liquidsIterable.iterator().forEachRemaining(unsortedLiquidArray::add);
+
+        if(filter != null) {
+            unsortedLiquidArray = unsortedLiquidArray.stream().filter(liquid ->
+                    liquid.getPriceDouble() >= Double.parseDouble(filter.split(";")[0]) &&
+                    liquid.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])).collect(Collectors.toList());
+        }
+
+        size = unsortedLiquidArray.size();
+        unsortedLiquidArray.sort(Comparator.comparing(Liquid::getPriceDouble));
+
+        List<Liquid> liquidArray = new ArrayList<>();
+        if(page < size) {
+            for(int i = page-99;i >= page-99&&i <= page;i++) {
+                liquidArray.add(unsortedLiquidArray.get(i));
             }
-            if(filter == null) {
-                unsortedLiquids.add(liquid);
+        } else {
+            if(size-99 > 0) {
+                for(int i = size-99;i >= size-99&&i < size;i++) {
+                    liquidArray.add(unsortedLiquidArray.get(i));
+                }
+            } else {
+                for(int i = 0;i >= 0&&i < size;i++) {
+                    liquidArray.add(unsortedLiquidArray.get(i));
+                }
             }
         }
-        size = unsortedLiquids.size();
-        unsortedLiquids.sort(Comparator.comparing(Liquid::getPriceDouble));
 
-        List<Liquid> liquids = new ArrayList<>();
-        int i = 0;
-        for(Liquid liquid : unsortedLiquids) {
-            i++;
-            if(i >= page-99&&i <= page) {
-                liquids.add(liquid);
-            }
-        }
-        return liquids;
+        return liquidArray;
     }
 
     @GetMapping("/high-low/liquids/")
     public List<Liquid> getDataHighToLowFilter() {
         Iterable<Liquid> liquidsIterable = liquidsRepository.findAll();
+        List<Liquid> unsortedLiquidArray = new ArrayList<>();
 
-        List<Liquid> unsortedLiquids = new ArrayList<>();
-        for(Liquid liquid : liquidsIterable) {
-            if(filter != null &&liquid.getPriceDouble() >= Double.parseDouble(filter.split(";")[0])
-                    &&liquid.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])) {
-                unsortedLiquids.add(liquid);
+        liquidsIterable.iterator().forEachRemaining(unsortedLiquidArray::add);
+
+        if(filter != null) {
+            unsortedLiquidArray = unsortedLiquidArray.stream().filter(liquid ->
+                    liquid.getPriceDouble() >= Double.parseDouble(filter.split(";")[0]) &&
+                    liquid.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])).collect(Collectors.toList());
+        }
+
+        size = unsortedLiquidArray.size();
+        unsortedLiquidArray.sort(Comparator.comparing(Liquid::getPriceDouble).reversed());
+
+        List<Liquid> liquidArray = new ArrayList<>();
+        if(page < size) {
+            for(int i = page-99;i >= page-99&&i <= page;i++) {
+                liquidArray.add(unsortedLiquidArray.get(i));
             }
-            if(filter == null) {
-                unsortedLiquids.add(liquid);
+        } else {
+            if(size-99 > 0) {
+                for(int i = size-99;i >= size-99&&i < size;i++) {
+                    liquidArray.add(unsortedLiquidArray.get(i));
+                }
+            } else {
+                for(int i = 0;i >= 0&&i < size;i++) {
+                    liquidArray.add(unsortedLiquidArray.get(i));
+                }
             }
         }
-        size = unsortedLiquids.size();
-        unsortedLiquids.sort(Comparator.comparing(Liquid::getPriceDouble).reversed());
 
-        List<Liquid> liquids = new ArrayList<>();
-        int i = 0;
-        for(Liquid liquid : unsortedLiquids) {
-            i++;
-            if(i >= page-99&&i <= page) {
-                liquids.add(liquid);
-            }
-        }
-        return liquids;
+        return liquidArray;
     }
 
     @GetMapping("/default/liquids/")
     public List<Liquid> getDataDefaultFilter() {
         Iterable<Liquid> liquidsIterable = liquidsRepository.findAll();
-
         List<Liquid> unsortedLiquidArray = new ArrayList<>();
-        for(Liquid liquid : liquidsIterable) {
-            if(filter != null &&liquid.getPriceDouble() >= Double.parseDouble(filter.split(";")[0])
-                              &&liquid.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])) {
-                unsortedLiquidArray.add(liquid);
-            }
-            if(filter == null) {
-                unsortedLiquidArray.add(liquid);
-            }
+
+        liquidsIterable.iterator().forEachRemaining(unsortedLiquidArray::add);
+
+        if(filter != null) {
+            unsortedLiquidArray = unsortedLiquidArray.stream().filter(liquid ->
+                    liquid.getPriceDouble() >= Double.parseDouble(filter.split(";")[0]) &&
+                    liquid.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])).collect(Collectors.toList());
         }
+
         size = unsortedLiquidArray.size();
 
         List<Liquid> liquidArray = new ArrayList<>();
-        int i = 0;
-        for(Liquid liquid : unsortedLiquidArray) {
-            i++;
-            if(i >= page-99&&i <= page) {
-                liquidArray.add(liquid);
+        if(page < size) {
+            for(int i = page-99;i >= page-99&&i <= page;i++) {
+                liquidArray.add(unsortedLiquidArray.get(i));
+            }
+        } else {
+            if(size-99 > 0) {
+                for(int i = size-99;i >= size-99&&i < size;i++) {
+                    liquidArray.add(unsortedLiquidArray.get(i));
+                }
+            } else {
+                for(int i = 0;i >= 0&&i < size;i++) {
+                    liquidArray.add(unsortedLiquidArray.get(i));
+                }
             }
         }
+
+
+
         return liquidArray;
     }
 
     @GetMapping("/liquids/price-range/")
-    public String getPriceRange(String priceRange) {
+    public String getPriceRange() {
         Iterable<Liquid> liquidsIterable = liquidsRepository.findAll();
-
         List<Liquid> unsortedLiquidArray = new ArrayList<>();
-        for(Liquid liquid : liquidsIterable) {
-            unsortedLiquidArray.add(liquid);
-        }
 
-        priceRange = unsortedLiquidArray.stream().min(Comparator.comparing(Liquid::getPriceDouble)).get().getPriceDouble() + ";" +
-                     unsortedLiquidArray.stream().max(Comparator.comparing(Liquid::getPriceDouble)).get().getPriceDouble();
+        liquidsIterable.iterator().forEachRemaining(unsortedLiquidArray::add);
 
-        return priceRange;
+        return unsortedLiquidArray.stream().min(Comparator.comparing(Liquid::getPriceDouble)).get().getPriceDouble() + ";" +
+                unsortedLiquidArray.stream().max(Comparator.comparing(Liquid::getPriceDouble)).get().getPriceDouble();
     }
 
     @GetMapping("/liquids/filter-low/length/")
@@ -136,7 +160,7 @@ public class LiquidController {
 
     @PostMapping("/liquids/page/")
     public void setPage(@RequestHeader("page") int page) {
-        this.page = page;
+        this.page = page * 100;
     }
 
     @PostMapping("/liquids/filter/")
