@@ -1,22 +1,18 @@
 package main.controllers;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.mysql.cj.xdevapi.JsonString;
-import io.jsonwebtoken.Jwt;
 import main.configs.jwt.JwtUtils;
+import main.exception.TokenRefreshException;
 import main.model.ERole;
 
+import main.model.RefreshToken;
 import main.model.Role;
 import main.model.User;
-import main.pojo.JwtResponse;
-import main.pojo.LoginRequest;
-import main.pojo.MessageResponse;
-import main.pojo.SignupRequest;
+import main.pojo.*;
 import main.repository.RoleRepository;
 import main.repository.UserRepository;
+import main.service.RefreshTokenService;
 import main.service.UserDetailsImpl;
-import org.apache.tomcat.util.json.JSONParser;
+import main.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -49,24 +45,54 @@ public class AuthController {
 	
 	@Autowired
 	JwtUtils jwtUtils;
-	
-	@PostMapping("/signin")
+
+	@Autowired
+	RefreshTokenService refreshTokenService;
+
+	/*@PostMapping("/signin")
 	public ResponseEntity<?> authUser(@RequestBody LoginRequest loginRequest) {
-		
+
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(
 						loginRequest.getUsername(),
 						loginRequest.getPassword()));
-		
+
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = jwtUtils.generateJwtToken(authentication);
-		
+
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 		List<String> roles = userDetails.getAuthorities().stream()
 				.map(GrantedAuthority::getAuthority)
 				.collect(Collectors.toList());
-		
+
 		return ResponseEntity.ok(new JwtResponse(jwt,
+				userDetails.getId(),
+				userDetails.getUsername(),
+				userDetails.getEmail(),
+				roles));
+	}*/
+
+
+	@PostMapping("/signin")
+	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+
+		Authentication authentication = authenticationManager
+				.authenticate(new UsernamePasswordAuthenticationToken(
+						loginRequest.getUsername(),
+						loginRequest.getPassword()));
+
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String jwt = jwtUtils.generateJwtToken(authentication);
+
+		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+		List<String> roles = userDetails.getAuthorities().stream()
+				.map(GrantedAuthority::getAuthority)
+				.collect(Collectors.toList());
+
+		RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
+		return ResponseEntity.ok(new SignupResponse(jwt,
+				refreshToken.getToken(),
 				userDetails.getId(),
 				userDetails.getUsername(),
 				userDetails.getEmail(),
@@ -144,4 +170,25 @@ public class AuthController {
 		String[] parts = token.split("\\.");
 		return Base64.getUrlDecoder().decode(parts[1]);
 	}*/
+
+	@PostMapping("/refreshtoken")
+	public ResponseEntity<?> refreshtoken(@RequestBody RefreshTokenRequest request) {
+		String requestRefreshToken = request.getRefreshToken();
+
+		return refreshTokenService.findByToken(requestRefreshToken)
+				.map(refreshTokenService::verifyExpiration)
+				.map(RefreshToken::getUser)
+				.map(user -> {
+					String token = jwtUtils.generateTokenFromUsername(user.getUsername());
+					return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+				}).orElseThrow(() ->
+						new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
+	}
+
+	@GetMapping("/validatetoken")
+	public void validateToken(@RequestHeader("Authorization") String test) {
+		String token = test.split(" ")[1];
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		userRespository.findByUsername(username);
+	}
 }
