@@ -1,5 +1,7 @@
 package main.controllers;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import main.configs.jwt.JwtUtils;
 import main.exception.TokenRefreshException;
 import main.model.ERole;
@@ -164,12 +166,11 @@ public class AuthController {
 		return cookie();
 	}*/
 
-	/*@GetMapping("/user")
-	public byte[] verifyUser(@RequestHeader("Authorization") String authHeader) {
+	@GetMapping("/user")
+	public String verifyUser(@RequestHeader("Authorization") String authHeader) {
 		String token = authHeader.split(" ")[1];
-		String[] parts = token.split("\\.");
-		return Base64.getUrlDecoder().decode(parts[1]);
-	}*/
+		return jwtUtils.getUserNameFromJwtToken(token);
+	}
 
 	@PostMapping("/refreshtoken")
 	public ResponseEntity<?> refreshtoken(@RequestBody RefreshTokenRequest request) {
@@ -185,10 +186,12 @@ public class AuthController {
 						new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
 	}
 
-	@GetMapping("/validatetoken")
+	/*@GetMapping("/validatetoken")
 	public void validateToken(@RequestHeader("Authorization") String test) {
 		String token = test.split(" ")[1];
-		String username = jwtUtils.getUserNameFromJwtToken(token);
-		userRespository.findByUsername(username);
-	}
+		*//*((Claims) Jwts.parser().parse(token).getBody()).getExpiration();*//*
+		System.out.println(((Claims) Jwts.parser().parse(token).getBody()).getExpiration());
+		*//*String username = jwtUtils.getUserNameFromJwtToken(token);
+		userRespository.findByUsername(username);*//*
+	}*/
 }

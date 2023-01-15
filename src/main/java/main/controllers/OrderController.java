@@ -21,14 +21,15 @@ public class OrderController {
     public List<Order> getData(@RequestHeader("Authorization") String token) {
         String userNameFromJwtToken = jwtUtils.getUserNameFromJwtToken(token.split(" ")[1]);
         Iterable<Order> orderIterable = orderRepository.findAll();
+        ArrayList<Order> orderList = new ArrayList<>();
 
-        ArrayList<Order> orderArray = new ArrayList<>();
-        for(Order order : orderIterable) {
+        orderIterable.iterator().forEachRemaining(order -> {
             if(order.getUsername().equals(userNameFromJwtToken)) {
-                orderArray.add(order);
+                orderList.add(order);
             }
-        }
-        return orderArray;
+        });
+
+        return orderList;
     }
 
     @PostMapping("/order/")
@@ -40,21 +41,23 @@ public class OrderController {
     @PutMapping("/order/")
     public void changeOrder(Order order) {
         Iterable<Order> orderIterable = orderRepository.findAll();
-        for(Order order1 : orderIterable) {
+
+        orderIterable.iterator().forEachRemaining(order1 -> {
             if(order.getProductname().equals(order1.getProductname())) {
                 orderRepository.deleteById(order1.getId());
                 orderRepository.save(order);
             }
-        }
+        });
     }
 
     @DeleteMapping("/order/")
     public void deleteOrder(Order order) {
         Iterable<Order> orderIterable = orderRepository.findAll();
-        for(Order order1 : orderIterable) {
+
+        orderIterable.iterator().forEachRemaining(order1 -> {
             if(order.getProductname().equals(order1.getProductname())) {
                 orderRepository.deleteById(order1.getId());
             }
-        }
+        });
     }
 }

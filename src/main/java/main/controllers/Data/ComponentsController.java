@@ -1,12 +1,13 @@
 package main.controllers.Data;
 
-import main.model.Data.Components;
+import main.model.Data.Impl.Components;
 import main.repository.datarepository.ComponentsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -24,133 +25,58 @@ public class ComponentsController {
     @GetMapping("/low-high/components/")
     public List<Components> getDataLowToHighFilter() {
         Iterable<Components> componentsIterable = componentsRepository.findAll();
-        List<Components> unsortedComponentArray = new ArrayList<>();
+        List<Components> componentsList = new ArrayList<>();
 
-        componentsIterable.iterator().forEachRemaining(unsortedComponentArray::add);
+        componentsIterable.iterator().forEachRemaining(componentsList::add);
 
-        if(filter != null) {
-            unsortedComponentArray = unsortedComponentArray.stream().filter(component ->
-                    component.getPriceDouble() >= Double.parseDouble(filter.split(";")[0]) &&
-                    component.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])).collect(Collectors.toList());
-        }
+        componentsList = filterData(componentsList);
+        componentsList.sort(Comparator.comparing(Components::getPrice));
 
-        size = unsortedComponentArray.size();
-        unsortedComponentArray.sort(Comparator.comparing(Components::getPriceDouble));
+        size = componentsList.size();
 
-        List<Components> componentArray = new ArrayList<>();
-        if(page < size) {
-            for(int i = page-99;i >= page-99&&i <= page;i++) {
-                componentArray.add(unsortedComponentArray.get(i));
-            }
-        } else {
-            if(size-99 > 0) {
-                for(int i = size-99;i >= size-99&&i < size;i++) {
-                    componentArray.add(unsortedComponentArray.get(i));
-                }
-            } else {
-                for(int i = 0;i >= 0&&i < size;i++) {
-                    componentArray.add(unsortedComponentArray.get(i));
-                }
-            }
-        }
-
-        return componentArray;
+        return getSortedData(componentsList,size);
     }
 
     @GetMapping("/high-low/components/")
     public List<Components> getDataHighToLowFilter() {
         Iterable<Components> componentsIterable = componentsRepository.findAll();
-        List<Components> unsortedComponentArray = new ArrayList<>();
+        List<Components> componentsList = new ArrayList<>();
 
-        componentsIterable.iterator().forEachRemaining(unsortedComponentArray::add);
+        componentsIterable.iterator().forEachRemaining(componentsList::add);
 
-        if(filter != null) {
-            unsortedComponentArray = unsortedComponentArray.stream().filter(component ->
-                    component.getPriceDouble() >= Double.parseDouble(filter.split(";")[0]) &&
-                    component.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])).collect(Collectors.toList());
-        }
+        componentsList = filterData(componentsList);
+        componentsList.sort(Comparator.comparing(Components::getPrice).reversed());
 
-        size = unsortedComponentArray.size();
-        unsortedComponentArray.sort(Comparator.comparing(Components::getPriceDouble).reversed());
+        size = componentsList.size();
 
-        List<Components> componentArray = new ArrayList<>();
-        if(page < size) {
-            for(int i = page-99;i >= page-99&&i <= page;i++) {
-                componentArray.add(unsortedComponentArray.get(i));
-            }
-        } else {
-            if(size-99 > 0) {
-                for(int i = size-99;i >= size-99&&i < size;i++) {
-                    componentArray.add(unsortedComponentArray.get(i));
-                }
-            } else {
-                for(int i = 0;i >= 0&&i < size;i++) {
-                    componentArray.add(unsortedComponentArray.get(i));
-                }
-            }
-        }
-
-        return componentArray;
+        return getSortedData(componentsList,size);
     }
 
     @GetMapping("/default/components/")
     public List<Components> getDataDefaultFilter() {
         Iterable<Components> componentsIterable = componentsRepository.findAll();
-        List<Components> unsortedComponentArray = new ArrayList<>();
+        List<Components> componentsList = new ArrayList<>();
 
-        componentsIterable.iterator().forEachRemaining(unsortedComponentArray::add);
+        componentsIterable.iterator().forEachRemaining(componentsList::add);
 
-        if(filter != null) {
-            unsortedComponentArray = unsortedComponentArray.stream().filter(component ->
-                    component.getPriceDouble() >= Double.parseDouble(filter.split(";")[0]) &&
-                    component.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])).collect(Collectors.toList());
-        }
+        size = filterData(componentsList).size();
 
-        size = unsortedComponentArray.size();
-
-        List<Components> componentArray = new ArrayList<>();
-        if(page < size) {
-            for(int i = page-99;i >= page-99&&i <= page;i++) {
-                componentArray.add(unsortedComponentArray.get(i));
-            }
-        } else {
-            if(size-99 > 0) {
-                for(int i = size-99;i >= size-99&&i < size;i++) {
-                    componentArray.add(unsortedComponentArray.get(i));
-                }
-            } else {
-                for(int i = 0;i >= 0&&i < size;i++) {
-                    componentArray.add(unsortedComponentArray.get(i));
-                }
-            }
-        }
-
-        return componentArray;
+        return getSortedData(componentsList,size);
     }
 
     @GetMapping("/components/price-range/")
     public String getPriceRange() {
         Iterable<Components> componentsIterable = componentsRepository.findAll();
-        List<Components> unsortedComponentArray = new ArrayList<>();
+        List<Components> componentsList = new ArrayList<>();
 
-        componentsIterable.iterator().forEachRemaining(unsortedComponentArray::add);
+        componentsIterable.iterator().forEachRemaining(componentsList::add);
 
-        return unsortedComponentArray.stream().min(Comparator.comparing(Components::getPriceDouble)).get().getPriceDouble() + ";" +
-                unsortedComponentArray.stream().max(Comparator.comparing(Components::getPriceDouble)).get().getPriceDouble();
+        return componentsList.stream().min(Comparator.comparing(Components::getPrice)).get().getPrice() + ";" +
+                componentsList.stream().max(Comparator.comparing(Components::getPrice)).get().getPrice();
     }
 
-    @GetMapping("/components/filter-low/length/")
-    public long getSizeMinFilter() {
-        return size;
-    }
-
-    @GetMapping("/components/filter-high/length/")
-    public long getSizeMaxFilter() {
-        return size;
-    }
-
-    @GetMapping("/components/filter-default/length/")
-    public long getSizeDefaultFilter() {
+    @GetMapping("/components/size/")
+    public long getDataSize() {
         return size;
     }
 
@@ -162,5 +88,32 @@ public class ComponentsController {
     @PostMapping("/components/filter/")
     public void setFilter(@RequestHeader("filter") String filter) {
         this.filter = filter;
+    }
+
+    public List<Components> getSortedData(List<Components> inputList, int size) {
+        List<Components> componentsList = new ArrayList<>();
+        if(page < size) {
+            for(int i = page-99;i >= page-99&&i <= page;i++) {
+                componentsList.add(inputList.get(i-1));
+            }
+        } else {
+            if(size-99 > 0) {
+                for(int i = size-99;i >= size-99&&i < size;i++) {
+                    componentsList.add(inputList.get(i));
+                }
+            } else {
+                for(int i = 0;i >= 0&&i < size;i++) {
+                    componentsList.add(inputList.get(i));
+                }
+            }
+        }
+        return componentsList;
+    }
+
+    public List<Components> filterData(List<Components> inputList) {
+        return inputList.stream().filter(components ->
+                components.getPrice() >= Integer.parseInt(filter.split(";")[0]) &&
+                        components.getPrice() <= Integer.parseInt(filter.split(";")[1])).collect(Collectors.toList());
+
     }
 }

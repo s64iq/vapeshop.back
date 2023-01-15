@@ -11,7 +11,7 @@ public class Order {
     private int id;
     private String username;
     private String productname;
-    private String price;
+    private int price;
     private String photo;
     private String urlname;
     private int count;
@@ -41,11 +41,11 @@ public class Order {
         this.productname = productname;
     }
 
-    public String getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 

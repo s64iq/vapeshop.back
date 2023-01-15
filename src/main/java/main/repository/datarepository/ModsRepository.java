@@ -1,6 +1,6 @@
 package main.repository.datarepository;
 
-import main.model.Data.Mods;
+import main.model.Data.Impl.Mods;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

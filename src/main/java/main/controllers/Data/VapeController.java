@@ -1,6 +1,6 @@
 package main.controllers.Data;
 
-import main.model.Data.Vape;
+import main.model.Data.Impl.Vape;
 import main.repository.datarepository.VapeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,133 +23,58 @@ public class VapeController {
     @GetMapping("/low-high/vapes/")
     public List<Vape> getDataLowToHighFilter() {
         Iterable<Vape> vapesIterable = vapeRepository.findAll();
-        List<Vape> unsortedVapeArray = new ArrayList<>();
+        List<Vape> vapeList = new ArrayList<>();
 
-        vapesIterable.iterator().forEachRemaining(unsortedVapeArray::add);
+        vapesIterable.iterator().forEachRemaining(vapeList::add);
 
-        if(filter != null) {
-            unsortedVapeArray = unsortedVapeArray.stream().filter(component ->
-                    component.getPriceDouble() >= Double.parseDouble(filter.split(";")[0]) &&
-                    component.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])).collect(Collectors.toList());
-        }
+        vapeList = filterData(vapeList);
+        vapeList.sort(Comparator.comparing(Vape::getPrice));
 
-        size = unsortedVapeArray.size();
-        unsortedVapeArray.sort(Comparator.comparing(Vape::getPriceDouble));
+        size = vapeList.size();
 
-        List<Vape> vapeArray = new ArrayList<>();
-        if(page < size) {
-            for(int i = page-99;i >= page-99&&i <= page;i++) {
-                vapeArray.add(unsortedVapeArray.get(i));
-            }
-        } else {
-            if(size-99 > 0) {
-                for(int i = size-99;i >= size-99&&i < size;i++) {
-                    vapeArray.add(unsortedVapeArray.get(i));
-                }
-            } else {
-                for(int i = 0;i >= 0&&i < size;i++) {
-                    vapeArray.add(unsortedVapeArray.get(i));
-                }
-            }
-        }
-
-        return vapeArray;
+        return getSortedData(vapeList,size);
     }
 
     @GetMapping("/high-low/vapes/")
     public List<Vape> getDataHighToLowFilter() {
         Iterable<Vape> vapesIterable = vapeRepository.findAll();
-        List<Vape> unsortedVapeArray = new ArrayList<>();
+        List<Vape> vapeList = new ArrayList<>();
 
-        vapesIterable.iterator().forEachRemaining(unsortedVapeArray::add);
+        vapesIterable.iterator().forEachRemaining(vapeList::add);
 
-        if(filter != null) {
-            unsortedVapeArray = unsortedVapeArray.stream().filter(component ->
-                    component.getPriceDouble() >= Double.parseDouble(filter.split(";")[0]) &&
-                    component.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])).collect(Collectors.toList());
-        }
+        vapeList = filterData(vapeList);
+        vapeList.sort(Comparator.comparing(Vape::getPrice).reversed());
 
-        size = unsortedVapeArray.size();
-        unsortedVapeArray.sort(Comparator.comparing(Vape::getPriceDouble).reversed());
+        size = vapeList.size();
 
-        List<Vape> vapeArray = new ArrayList<>();
-        if(page < size) {
-            for(int i = page-99;i >= page-99&&i <= page;i++) {
-                vapeArray.add(unsortedVapeArray.get(i));
-            }
-        } else {
-            if(size-99 > 0) {
-                for(int i = size-99;i >= size-99&&i < size;i++) {
-                    vapeArray.add(unsortedVapeArray.get(i));
-                }
-            } else {
-                for(int i = 0;i >= 0&&i < size;i++) {
-                    vapeArray.add(unsortedVapeArray.get(i));
-                }
-            }
-        }
-
-        return vapeArray;
+        return getSortedData(vapeList,size);
     }
 
     @GetMapping("/default/vapes/")
     public List<Vape> getDataDefaultFilter() {
         Iterable<Vape> vapesIterable = vapeRepository.findAll();
-        List<Vape> unsortedVapeArray = new ArrayList<>();
+        List<Vape> vapeList = new ArrayList<>();
 
-        vapesIterable.iterator().forEachRemaining(unsortedVapeArray::add);
+        vapesIterable.iterator().forEachRemaining(vapeList::add);
 
-        if(filter != null) {
-            unsortedVapeArray = unsortedVapeArray.stream().filter(component ->
-                    component.getPriceDouble() >= Double.parseDouble(filter.split(";")[0]) &&
-                    component.getPriceDouble() <= Double.parseDouble(filter.split(";")[1])).collect(Collectors.toList());
-        }
+        size = filterData(vapeList).size();
 
-        size = unsortedVapeArray.size();
-
-        List<Vape> vapeArray = new ArrayList<>();
-        if(page < size) {
-            for(int i = page-99;i >= page-99&&i <= page;i++) {
-                vapeArray.add(unsortedVapeArray.get(i));
-            }
-        } else {
-            if(size-99 > 0) {
-                for(int i = size-99;i >= size-99&&i < size;i++) {
-                    vapeArray.add(unsortedVapeArray.get(i));
-                }
-            } else {
-                for(int i = 0;i >= 0&&i < size;i++) {
-                    vapeArray.add(unsortedVapeArray.get(i));
-                }
-            }
-        }
-
-        return vapeArray;
+        return getSortedData(vapeList, size);
     }
 
     @GetMapping("/vapes/price-range/")
     public String getPriceRange() {
         Iterable<Vape> vapesIterable = vapeRepository.findAll();
-        List<Vape> unsortedVapeArray = new ArrayList<>();
+        List<Vape> vapeList = new ArrayList<>();
 
-        vapesIterable.iterator().forEachRemaining(unsortedVapeArray::add);
+        vapesIterable.iterator().forEachRemaining(vapeList::add);
 
-        return unsortedVapeArray.stream().min(Comparator.comparing(Vape::getPriceDouble)).get().getPriceDouble() + ";" +
-                unsortedVapeArray.stream().max(Comparator.comparing(Vape::getPriceDouble)).get().getPriceDouble();
+        return vapeList.stream().min(Comparator.comparing(Vape::getPrice)).get().getPrice() + ";" +
+               vapeList.stream().max(Comparator.comparing(Vape::getPrice)).get().getPrice();
     }
 
-    @GetMapping("/vapes/filter-low/length/")
-    public long getSizeMinFilter() {
-        return size;
-    }
-
-    @GetMapping("/vapes/filter-high/length/")
-    public long getSizeMaxFilter() {
-        return size;
-    }
-
-    @GetMapping("/vapes/filter-default/length/")
-    public long getSizeDefaultFilter() {
+    @GetMapping("/vapes/size/")
+    public long getDataSize() {
         return size;
     }
 
@@ -161,5 +86,32 @@ public class VapeController {
     @PostMapping("/vapes/filter/")
     public void setFilter(@RequestHeader("filter") String filter) {
         this.filter = filter;
+    }
+
+    public List<Vape> getSortedData(List<Vape> inputList, int size) {
+        List<Vape> vapeList = new ArrayList<>();
+        if(page < size) {
+            for(int i = page-99;i >= page-99&&i <= page;i++) {
+                vapeList.add(inputList.get(i-1));
+            }
+        } else {
+            if(size-99 > 0) {
+                for(int i = size-99;i >= size-99&&i < size;i++) {
+                    vapeList.add(inputList.get(i));
+                }
+            } else {
+                for(int i = 0;i >= 0&&i < size;i++) {
+                    vapeList.add(inputList.get(i));
+                }
+            }
+        }
+        return vapeList;
+    }
+
+    public List<Vape> filterData(List<Vape> inputList) {
+        return inputList.stream().filter(vape ->
+                vape.getPrice() >= Integer.parseInt(filter.split(";")[0]) &&
+                        vape.getPrice() <= Integer.parseInt(filter.split(";")[1])).collect(Collectors.toList());
+
     }
 }

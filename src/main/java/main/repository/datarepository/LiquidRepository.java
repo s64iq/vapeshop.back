@@ -1,6 +1,6 @@
 package main.repository.datarepository;
 
-import main.model.Data.Liquid;
+import main.model.Data.Impl.Liquid;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
