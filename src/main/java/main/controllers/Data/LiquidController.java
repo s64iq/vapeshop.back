@@ -1,5 +1,7 @@
 package main.controllers.Data;
 
+import main.controllers.FilterController;
+import main.controllers.PageController;
 import main.model.Data.Impl.Liquid;
 import main.repository.datarepository.LiquidRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +19,20 @@ public class LiquidController {
     @Autowired
     private LiquidRepository liquidsRepository;
 
-    private int page;
+    @Autowired
+    private PageController pageController;
 
-    private String filter;
+    @Autowired
+    private FilterController filterController;
 
     private int size;
 
-    @GetMapping("/low-high/liquids/")
+    @GetMapping("/liquids/product/")
+    public Liquid getProduct(@RequestHeader("productName") String productName) {
+        return findProduct(productName);
+    }
+
+    @GetMapping("/liquids/low-high/")
     public List<Liquid> getDataLowToHighFilter() {
         Iterable<Liquid> liquidsIterable = liquidsRepository.findAll();
         List<Liquid> liquidList = new ArrayList<>();
@@ -38,7 +47,7 @@ public class LiquidController {
         return getSortedData(liquidList,size);
     }
 
-    @GetMapping("/high-low/liquids/")
+    @GetMapping("/liquids/high-low/")
     public List<Liquid> getDataHighToLowFilter() {
         Iterable<Liquid> liquidsIterable = liquidsRepository.findAll();
         List<Liquid> liquidList = new ArrayList<>();
@@ -53,14 +62,16 @@ public class LiquidController {
         return getSortedData(liquidList,size);
     }
 
-    @GetMapping("/default/liquids/")
+    @GetMapping("/liquids/default/")
     public List<Liquid> getDataDefaultFilter() {
         Iterable<Liquid> liquidsIterable = liquidsRepository.findAll();
         List<Liquid> liquidList = new ArrayList<>();
 
         liquidsIterable.iterator().forEachRemaining(liquidList::add);
 
-        size = filterData(liquidList).size();
+        liquidList = filterData(liquidList);
+
+        size = liquidList.size();
 
         return getSortedData(liquidList, size);
     }
@@ -80,25 +91,15 @@ public class LiquidController {
         return size;
     }
 
-    @PostMapping("/liquids/page/")
-    public void setPage(@RequestHeader("page") int page) {
-        this.page = page * 100;
-    }
-
-    @PostMapping("/liquids/filter/")
-    public void setFilter(@RequestHeader("filter") String filter) {
-        this.filter = filter;
-    }
-
     public List<Liquid> getSortedData(List<Liquid> inputList, int size) {
         List<Liquid> liquidList = new ArrayList<>();
-        if(page < size) {
-            for(int i = page-99;i >= page-99&&i <= page;i++) {
+        if(pageController.getPage() < size) {
+            for(int i = pageController.getPage()-99;i >= pageController.getPage()-99 && i <= pageController.getPage();i++) {
                 liquidList.add(inputList.get(i-1));
             }
         } else {
             if(size-99 > 0) {
-                for(int i = size-99;i >= size-99&&i < size;i++) {
+                for(int i = pageController.getPage()-99;i >= pageController.getPage()-99 && i < size;i++) {
                     liquidList.add(inputList.get(i));
                 }
             } else {
@@ -112,8 +113,18 @@ public class LiquidController {
 
     public List<Liquid> filterData(List<Liquid> inputList) {
         return inputList.stream().filter(liquid ->
-                        liquid.getPrice() >= Integer.parseInt(filter.split(";")[0]) &&
-                        liquid.getPrice() <= Integer.parseInt(filter.split(";")[1])).collect(Collectors.toList());
+                        liquid.getPrice() >= Integer.parseInt(filterController.getFilter().split(";")[0]) &&
+                        liquid.getPrice() <= Integer.parseInt(filterController.getFilter().split(";")[1])).collect(Collectors.toList());
 
+    }
+
+    public Liquid findProduct(String productName) {
+        Iterable<Liquid> liquidIterable = liquidsRepository.findAll();
+        for (Liquid liquid : liquidIterable) {
+            if(liquid.getUrl().indexOf(productName) != -1) {
+                return liquid;
+            }
+        }
+        return null;
     }
 }

@@ -1,9 +1,12 @@
 package main.model.Data.Impl;
 
+import lombok.*;
 import main.model.Product;
 
 import javax.persistence.*;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "liquids")
 public class Liquid implements Product {
@@ -19,24 +22,6 @@ public class Liquid implements Product {
     @Column(length = 7000)
     private String url;
 
-    public int getId() {
-        return id;
+    public Liquid() {
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    /*public Double getPriceDouble() {
-        String stringPrice = getPrice() + ".0";
-        return Double.parseDouble(stringPrice);
-    }*/
 }

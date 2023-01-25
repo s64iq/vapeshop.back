@@ -1,5 +1,8 @@
 package main.controllers.Data;
 
+import main.controllers.FilterController;
+import main.controllers.PageController;
+import main.model.Data.Impl.Mod;
 import main.model.Data.Impl.Vape;
 import main.repository.datarepository.VapeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +19,21 @@ public class VapeController {
 
     @Autowired
     private VapeRepository vapeRepository;
-    private int page;
-    private String filter;
+
+    @Autowired
+    private PageController pageController;
+
+    @Autowired
+    private FilterController filterController;
+
     private int size;
 
-    @GetMapping("/low-high/vapes/")
+    @GetMapping("/vapes/product/")
+    public Vape getProduct(@RequestHeader("productName") String productName) {
+        return findProduct(productName);
+    }
+
+    @GetMapping("/vapes/low-high/")
     public List<Vape> getDataLowToHighFilter() {
         Iterable<Vape> vapesIterable = vapeRepository.findAll();
         List<Vape> vapeList = new ArrayList<>();
@@ -35,7 +48,7 @@ public class VapeController {
         return getSortedData(vapeList,size);
     }
 
-    @GetMapping("/high-low/vapes/")
+    @GetMapping("/vapes/high-low/")
     public List<Vape> getDataHighToLowFilter() {
         Iterable<Vape> vapesIterable = vapeRepository.findAll();
         List<Vape> vapeList = new ArrayList<>();
@@ -50,14 +63,16 @@ public class VapeController {
         return getSortedData(vapeList,size);
     }
 
-    @GetMapping("/default/vapes/")
+    @GetMapping("/vapes/default/")
     public List<Vape> getDataDefaultFilter() {
         Iterable<Vape> vapesIterable = vapeRepository.findAll();
         List<Vape> vapeList = new ArrayList<>();
 
         vapesIterable.iterator().forEachRemaining(vapeList::add);
 
-        size = filterData(vapeList).size();
+        vapeList = filterData(vapeList);
+
+        size = vapeList.size();
 
         return getSortedData(vapeList, size);
     }
@@ -78,25 +93,15 @@ public class VapeController {
         return size;
     }
 
-    @PostMapping("/vapes/page/")
-    public void setCurrentPage(@RequestHeader("page") int page) {
-        this.page = page * 100;
-    }
-
-    @PostMapping("/vapes/filter/")
-    public void setFilter(@RequestHeader("filter") String filter) {
-        this.filter = filter;
-    }
-
     public List<Vape> getSortedData(List<Vape> inputList, int size) {
         List<Vape> vapeList = new ArrayList<>();
-        if(page < size) {
-            for(int i = page-99;i >= page-99&&i <= page;i++) {
+        if(pageController.getPage() < size) {
+            for(int i = pageController.getPage()-99;i >= pageController.getPage()-99 && i <= pageController.getPage();i++) {
                 vapeList.add(inputList.get(i-1));
             }
         } else {
             if(size-99 > 0) {
-                for(int i = size-99;i >= size-99&&i < size;i++) {
+                for(int i = pageController.getPage()-99;i >= pageController.getPage()-99 && i < size;i++) {
                     vapeList.add(inputList.get(i));
                 }
             } else {
@@ -110,8 +115,18 @@ public class VapeController {
 
     public List<Vape> filterData(List<Vape> inputList) {
         return inputList.stream().filter(vape ->
-                vape.getPrice() >= Integer.parseInt(filter.split(";")[0]) &&
-                        vape.getPrice() <= Integer.parseInt(filter.split(";")[1])).collect(Collectors.toList());
+                vape.getPrice() >= Integer.parseInt(filterController.getFilter().split(";")[0]) &&
+                vape.getPrice() <= Integer.parseInt(filterController.getFilter().split(";")[1])).collect(Collectors.toList());
 
+    }
+
+    public Vape findProduct(String productName) {
+        Iterable<Vape> vapeIterable = vapeRepository.findAll();
+        for (Vape vape : vapeIterable) {
+            if(vape.getUrl().indexOf(productName) != -1) {
+                return vape;
+            }
+        }
+        return null;
     }
 }

@@ -6,7 +6,6 @@ import main.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,44 +19,41 @@ public class OrderController {
     @GetMapping("/order/")
     public List<Order> getData(@RequestHeader("Authorization") String token) {
         String userNameFromJwtToken = jwtUtils.getUserNameFromJwtToken(token.split(" ")[1]);
-        Iterable<Order> orderIterable = orderRepository.findAll();
-        ArrayList<Order> orderList = new ArrayList<>();
+        return orderRepository.findByUsername(userNameFromJwtToken);
+    }
 
-        orderIterable.iterator().forEachRemaining(order -> {
-            if(order.getUsername().equals(userNameFromJwtToken)) {
-                orderList.add(order);
-            }
-        });
-
-        return orderList;
+    @GetMapping("/order/total/")
+    public int getTotalPrice(@RequestHeader("Authorization") String token) {
+        String userNameFromJwtToken = jwtUtils.getUserNameFromJwtToken(token.split(" ")[1]);
+        int total = 0;
+        for (Order order : orderRepository.findByUsername(userNameFromJwtToken)) {
+            total += order.getPrice() * order.getCount();
+        }
+        return total;
     }
 
     @PostMapping("/order/")
-    public int addOrder(Order order) {
-        Order order1 = orderRepository.save(order);
-        return order1.getId();
+    public boolean addOrder(Order order) {
+        if(orderRepository.existsByUsernameContainsAndProductnameContains(order.getUsername(), order.getProductname())) {
+            return false;
+        } else {
+            orderRepository.save(order);
+            return true;
+        }
     }
 
     @PutMapping("/order/")
     public void changeOrder(Order order) {
-        Iterable<Order> orderIterable = orderRepository.findAll();
-
-        orderIterable.iterator().forEachRemaining(order1 -> {
-            if(order.getProductname().equals(order1.getProductname())) {
-                orderRepository.deleteById(order1.getId());
-                orderRepository.save(order);
-            }
-        });
+        if(orderRepository.existsByUsernameContainsAndProductnameContains(order.getUsername(), order.getProductname())) {
+            orderRepository.deleteById(orderRepository.findByUsernameContainsAndProductnameContains(order.getUsername(),order.getProductname()).get().getId());
+            orderRepository.save(order);
+        }
     }
 
     @DeleteMapping("/order/")
     public void deleteOrder(Order order) {
-        Iterable<Order> orderIterable = orderRepository.findAll();
-
-        orderIterable.iterator().forEachRemaining(order1 -> {
-            if(order.getProductname().equals(order1.getProductname())) {
-                orderRepository.deleteById(order1.getId());
-            }
-        });
+        if(orderRepository.existsByUsernameContainsAndProductnameContains(order.getUsername(), order.getProductname())) {
+            orderRepository.deleteById(orderRepository.findByUsernameContainsAndProductnameContains(order.getUsername(),order.getProductname()).get().getId());
+        }
     }
 }

@@ -8,8 +8,8 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "vapes")
-public class Vape extends ProductWithFeatures {
+@Table(name = "mods")
+public class Mod extends ProductWithFeatures {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +28,6 @@ public class Vape extends ProductWithFeatures {
     @Column(length = 1500)
     private String comp;
 
-    public Vape() {
+    public Mod() {
     }
 }
