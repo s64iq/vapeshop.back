@@ -30,4 +30,7 @@ public class Order {
     private String urlname;
 
     private int count;
+
+    public Order() {
+    }
 }
