@@ -30,7 +30,8 @@ public class VapeController {
 
     @GetMapping("/vapes/product/")
     public Vape getProduct(@RequestHeader("productName") String productName) {
-        return findProduct(productName);
+        return vapeRepository.findByUrlContains(productName)
+                .orElseThrow(() -> new RuntimeException("Error, Mod not found"));
     }
 
     @GetMapping("/vapes/low-high/")
@@ -118,15 +119,5 @@ public class VapeController {
                 vape.getPrice() >= Integer.parseInt(filterController.getFilter().split(";")[0]) &&
                 vape.getPrice() <= Integer.parseInt(filterController.getFilter().split(";")[1])).collect(Collectors.toList());
 
-    }
-
-    public Vape findProduct(String productName) {
-        Iterable<Vape> vapeIterable = vapeRepository.findAll();
-        for (Vape vape : vapeIterable) {
-            if(vape.getUrl().indexOf(productName) != -1) {
-                return vape;
-            }
-        }
-        return null;
     }
 }

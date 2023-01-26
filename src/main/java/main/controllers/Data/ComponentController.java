@@ -3,8 +3,10 @@ package main.controllers.Data;
 import main.controllers.FilterController;
 import main.controllers.PageController;
 import main.model.Data.Impl.Component;
+import main.pojo.MessageResponse;
 import main.repository.datarepository.ComponentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -28,7 +30,8 @@ public class ComponentController {
 
     @GetMapping("/components/product/")
     public Component getProduct(@RequestHeader("productName") String productName) {
-        return findProduct(productName);
+        return componentRepository.findByUrlContains(productName)
+                .orElseThrow(() -> new RuntimeException("Error, Component not found"));
     }
 
     @GetMapping("/components/low-high/")
@@ -116,15 +119,5 @@ public class ComponentController {
                 component.getPrice() >= Integer.parseInt(filterController.getFilter().split(";")[0]) &&
                 component.getPrice() <= Integer.parseInt(filterController.getFilter().split(";")[1])).collect(Collectors.toList());
 
-    }
-
-    public Component findProduct(String productName) {
-        Iterable<Component> componentIterable = componentRepository.findAll();
-        for (Component component : componentIterable) {
-            if(component.getUrl().indexOf(productName) != -1) {
-                return component;
-            }
-        }
-        return null;
     }
 }

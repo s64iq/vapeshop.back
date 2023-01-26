@@ -29,7 +29,8 @@ public class LiquidController {
 
     @GetMapping("/liquids/product/")
     public Liquid getProduct(@RequestHeader("productName") String productName) {
-        return findProduct(productName);
+        return liquidsRepository.findByUrlContains(productName)
+                .orElseThrow(() -> new RuntimeException("Error, Liquid not found"));
     }
 
     @GetMapping("/liquids/low-high/")
@@ -116,15 +117,5 @@ public class LiquidController {
                         liquid.getPrice() >= Integer.parseInt(filterController.getFilter().split(";")[0]) &&
                         liquid.getPrice() <= Integer.parseInt(filterController.getFilter().split(";")[1])).collect(Collectors.toList());
 
-    }
-
-    public Liquid findProduct(String productName) {
-        Iterable<Liquid> liquidIterable = liquidsRepository.findAll();
-        for (Liquid liquid : liquidIterable) {
-            if(liquid.getUrl().indexOf(productName) != -1) {
-                return liquid;
-            }
-        }
-        return null;
     }
 }

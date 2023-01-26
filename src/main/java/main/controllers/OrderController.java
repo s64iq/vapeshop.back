@@ -18,15 +18,16 @@ public class OrderController {
 
     @GetMapping("/order/")
     public List<Order> getData(@RequestHeader("Authorization") String token) {
-        String userNameFromJwtToken = jwtUtils.getUserNameFromJwtToken(token.split(" ")[1]);
-        return orderRepository.findByUsername(userNameFromJwtToken);
+        String userNameFromToken = jwtUtils.getUserNameFromJwtToken(token.split(" ")[1]);
+        return orderRepository.findByUsername(userNameFromToken)
+                .orElseThrow(() -> new RuntimeException("Error, Order's not found"));
     }
 
     @GetMapping("/order/total/")
     public int getTotalPrice(@RequestHeader("Authorization") String token) {
         String userNameFromJwtToken = jwtUtils.getUserNameFromJwtToken(token.split(" ")[1]);
         int total = 0;
-        for (Order order : orderRepository.findByUsername(userNameFromJwtToken)) {
+        for (Order order : orderRepository.findByUsernameIgnoreCase(userNameFromJwtToken)) {
             total += order.getPrice() * order.getCount();
         }
         return total;
@@ -51,9 +52,10 @@ public class OrderController {
     }
 
     @DeleteMapping("/order/")
-    public void deleteOrder(Order order) {
-        if(orderRepository.existsByUsernameContainsAndProductnameContains(order.getUsername(), order.getProductname())) {
-            orderRepository.deleteById(orderRepository.findByUsernameContainsAndProductnameContains(order.getUsername(),order.getProductname()).get().getId());
+    public void deleteOrder(@RequestHeader("Authorization") String token, String productName) {
+        String userNameFromToken = jwtUtils.getUserNameFromJwtToken(token.split(" ")[1]);
+        if(orderRepository.existsByUsernameContainsAndProductnameContains(userNameFromToken, productName)) {
+            orderRepository.deleteById(orderRepository.findByUsernameContainsAndProductnameContains(userNameFromToken, productName).get().getId());
         }
     }
 }

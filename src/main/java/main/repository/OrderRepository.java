@@ -14,5 +14,7 @@ public interface OrderRepository extends CrudRepository<Order,Integer> {
 
     Optional<Order> findByUsernameContainsAndProductnameContains(String username, String productname);
 
-    List<Order> findByUsername(String username);
+    Optional<List<Order>> findByUsername(String username);
+
+    List<Order> findByUsernameIgnoreCase(String username);
 }

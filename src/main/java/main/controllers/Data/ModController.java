@@ -2,7 +2,6 @@ package main.controllers.Data;
 
 import main.controllers.FilterController;
 import main.controllers.PageController;
-import main.model.Data.Impl.Liquid;
 import main.model.Data.Impl.Mod;
 import main.repository.datarepository.ModRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,8 @@ public class ModController {
 
     @GetMapping("/mods/product/")
     public Mod getProduct(@RequestHeader("productName") String productName) {
-        return findProduct(productName);
+        return modRepository.findByUrlContains(productName)
+                .orElseThrow(() -> new RuntimeException("Error, Mod not found"));
     }
 
     @GetMapping("/mods/low-high/")
@@ -118,15 +118,5 @@ public class ModController {
                 mod.getPrice() >= Integer.parseInt(filterController.getFilter().split(";")[0]) &&
                 mod.getPrice() <= Integer.parseInt(filterController.getFilter().split(";")[1])).collect(Collectors.toList());
 
-    }
-
-    public Mod findProduct(String productName) {
-        Iterable<Mod> modIterable = modRepository.findAll();
-        for (Mod mod : modIterable) {
-            if(mod.getUrl().indexOf(productName) != -1) {
-                return mod;
-            }
-        }
-        return null;
     }
 }
