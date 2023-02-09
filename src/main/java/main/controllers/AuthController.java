@@ -1,7 +1,5 @@
 package main.controllers;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import main.configs.jwt.JwtUtils;
 import main.exception.TokenRefreshException;
 import main.model.ERole;
@@ -14,7 +12,6 @@ import main.repository.RoleRepository;
 import main.repository.UserRepository;
 import main.service.RefreshTokenService;
 import main.service.UserDetailsImpl;
-import main.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,30 +47,6 @@ public class AuthController {
 
 	@Autowired
 	RefreshTokenService refreshTokenService;
-
-	/*@PostMapping("/signin")
-	public ResponseEntity<?> authUser(@RequestBody LoginRequest loginRequest) {
-
-		Authentication authentication = authenticationManager
-				.authenticate(new UsernamePasswordAuthenticationToken(
-						loginRequest.getUsername(),
-						loginRequest.getPassword()));
-
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtils.generateJwtToken(authentication);
-
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-		List<String> roles = userDetails.getAuthorities().stream()
-				.map(GrantedAuthority::getAuthority)
-				.collect(Collectors.toList());
-
-		return ResponseEntity.ok(new JwtResponse(jwt,
-				userDetails.getId(),
-				userDetails.getUsername(),
-				userDetails.getEmail(),
-				roles));
-	}*/
-
 
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
@@ -161,11 +134,6 @@ public class AuthController {
 		return ResponseEntity.ok(new MessageResponse("User CREATED"));
 	}
 
-	/*@DeleteMapping
-	public void deleteCookie(Cookie cookie) {
-		return cookie();
-	}*/
-
 	@GetMapping("/user")
 	public String verifyUser(@RequestHeader("Authorization") String authHeader) {
 		String token = authHeader.split(" ")[1];
@@ -185,13 +153,4 @@ public class AuthController {
 				}).orElseThrow(() ->
 						new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
 	}
-
-	/*@GetMapping("/validatetoken")
-	public void validateToken(@RequestHeader("Authorization") String test) {
-		String token = test.split(" ")[1];
-		*//*((Claims) Jwts.parser().parse(token).getBody()).getExpiration();*//*
-		System.out.println(((Claims) Jwts.parser().parse(token).getBody()).getExpiration());
-		*//*String username = jwtUtils.getUserNameFromJwtToken(token);
-		userRespository.findByUsername(username);*//*
-	}*/
 }
