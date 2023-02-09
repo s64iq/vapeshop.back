@@ -14,8 +14,6 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private int test;
-
     private String username;
 
     private String productname;
