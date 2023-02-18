@@ -1,6 +1,7 @@
 package main.repository;
 
 import main.model.Order;
+import main.model.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,12 +10,11 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends CrudRepository<Order,Integer> {
+    Optional<List<Order>> findByUser(User user);
 
-    boolean existsByUsernameContainsAndProductnameContains(String username, String productname);
+    boolean existsByUserAndProductName(User user, String productName);
 
-    Optional<Order> findByUsernameContainsAndProductnameContains(String username, String productname);
+    Order findByUserAndProductName(User user, String productName);
 
-    Optional<List<Order>> findByUsername(String username);
 
-    List<Order> findByUsernameIgnoreCase(String username);
 }

@@ -14,18 +14,27 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String username;
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
-    private String productname;
+    @Column(name = "product_name")
+    private String productName;
 
     private int price;
 
-    private String photo;
-
-    private String urlname;
-
     private int count;
 
+    private String url;
+
     public Order() {
+    }
+
+    public Order(User user, String productName, int price, int count, String url) {
+        this.user = user;
+        this.productName = productName;
+        this.price = price;
+        this.count = count;
+        this.url = url;
     }
 }

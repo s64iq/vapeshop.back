@@ -34,7 +34,7 @@ public class AuthController {
 	AuthenticationManager authenticationManager;
 	
 	@Autowired
-	UserRepository userRespository;
+	UserRepository userRepository;
 	
 	@Autowired
 	RoleRepository roleRepository;
@@ -77,13 +77,13 @@ public class AuthController {
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
 		
-		if (userRespository.existsByUsername(signupRequest.getUsername())) {
+		if (userRepository.existsByUsername(signupRequest.getUsername())) {
 			return ResponseEntity
 					.badRequest()
 					.body(new MessageResponse("Error: Username is exist"));
 		}
 		
-		if (userRespository.existsByEmail(signupRequest.getEmail())) {
+		if (userRepository.existsByEmail(signupRequest.getEmail())) {
 			return ResponseEntity
 				.badRequest()
 				.body(new MessageResponse("Error: Email is exist"));
@@ -130,14 +130,16 @@ public class AuthController {
 			});
 		}
 		user.setRoles(roles);
-		userRespository.save(user);
+		userRepository.save(user);
 		return ResponseEntity.ok(new MessageResponse("User CREATED"));
 	}
 
 	@GetMapping("/user")
-	public String verifyUser(@RequestHeader("Authorization") String authHeader) {
+	public User verifyUser(@RequestHeader("Authorization") String authHeader) {
 		String token = authHeader.split(" ")[1];
-		return jwtUtils.getUserNameFromJwtToken(token);
+
+		return userRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(token))
+				.orElseThrow(() -> new RuntimeException("Error, User is not found"));
 	}
 
 	@PostMapping("/refreshtoken")
