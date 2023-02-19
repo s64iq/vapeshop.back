@@ -135,11 +135,16 @@ public class AuthController {
 	}
 
 	@GetMapping("/user")
-	public User verifyUser(@RequestHeader("Authorization") String authHeader) {
+	public UserPropertiesResponse verifyUser(@RequestHeader("Authorization") String authHeader) {
 		String token = authHeader.split(" ")[1];
 
-		return userRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(token))
-				.orElseThrow(() -> new RuntimeException("Error, User is not found"));
+		User user = userRepository.findByUsernameIgnoreCase(jwtUtils.getUserNameFromJwtToken(token));
+
+		return new UserPropertiesResponse(
+				user.getId(),
+				user.getUsername(),
+				user.getEmail(),
+				user.getRoles());
 	}
 
 	@PostMapping("/refreshtoken")
