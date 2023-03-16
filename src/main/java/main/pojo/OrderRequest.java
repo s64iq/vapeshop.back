@@ -2,6 +2,8 @@ package main.pojo;
 
 import lombok.Getter;
 import lombok.Setter;
+import main.model.EProduct;
+import main.model.ProductType;
 import main.model.User;
 
 @Getter
@@ -9,11 +11,9 @@ import main.model.User;
 public class OrderRequest {
     private User user;
 
-    private String productName;
-
-    private int price;
+    private int productId;
 
     private int count;
 
-    private String url;
+    private ProductType productType;
 }

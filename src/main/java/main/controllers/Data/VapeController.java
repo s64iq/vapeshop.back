@@ -19,7 +19,7 @@ public class VapeController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/vapes/product/")
+    @GetMapping("/vape/product/")
     public Vape getProduct(@RequestHeader("productName") String productName) {
         return vapeRepository.findByUrlContains(productName)
                 .orElseThrow(() -> new RuntimeException("Error, Mod not found"));

@@ -18,23 +18,21 @@ public class Order {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @Column(name = "product_name")
-    private String productName;
-
-    private int price;
+    private int productId;
 
     private int count;
 
-    private String url;
+    @OneToOne
+    @JoinColumn(name = "product_type", referencedColumnName = "id")
+    private ProductType productType;
 
     public Order() {
     }
 
-    public Order(User user, String productName, int price, int count, String url) {
+    public Order(User user, int productId, int count, ProductType productType) {
         this.user = user;
-        this.productName = productName;
-        this.price = price;
+        this.productId = productId;
         this.count = count;
-        this.url = url;
+        this.productType = productType;
     }
 }

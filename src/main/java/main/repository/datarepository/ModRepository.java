@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface ModRepository extends CrudRepository<Mod,Integer> {
     Optional<Mod> findByUrlContains(String url);
+
+    Mod findByIdAllIgnoreCase(int id);
 }

@@ -18,7 +18,7 @@ public class ComponentController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/components/product/")
+    @GetMapping("/component/product/")
     public Component getProduct(@RequestHeader("productName") String productName) {
         return componentRepository.findByUrlContains(productName)
                 .orElseThrow(() -> new RuntimeException("Error, Component not found"));

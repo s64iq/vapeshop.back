@@ -2,6 +2,7 @@ package main.model.Data.Impl;
 
 import lombok.*;
 import main.model.Product;
+import main.model.ProductType;
 
 import javax.persistence.*;
 
@@ -21,6 +22,10 @@ public class Liquid implements Product {
 
     @Column(length = 7000)
     private String url;
+
+    @OneToOne
+    @JoinColumn(name = "product_type", referencedColumnName = "id")
+    private ProductType type;
 
     public Liquid() {
     }

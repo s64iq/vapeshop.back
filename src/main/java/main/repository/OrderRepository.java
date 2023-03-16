@@ -1,20 +1,19 @@
 package main.repository;
 
+import main.model.EProduct;
 import main.model.Order;
+import main.model.ProductType;
 import main.model.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends CrudRepository<Order,Integer> {
-    Optional<List<Order>> findByUser(User user);
+    boolean existsByUserAndProductIdAndProductType(User user, int productId, ProductType productType);
 
-    boolean existsByUserAndProductName(User user, String productName);
+    List<Order> findByUser(User user);
 
-    Order findByUserAndProductName(User user, String productName);
-
-
+    Order findByUserAndProductIdAndProductType(User user, int productId, ProductType productType);
 }

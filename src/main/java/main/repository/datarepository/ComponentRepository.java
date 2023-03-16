@@ -10,5 +10,7 @@ import java.util.Optional;
 public interface ComponentRepository extends CrudRepository<Component,Integer> {
     Optional<Component> findByUrlContains(String url);
 
+    Component findByIdAllIgnoreCase(int id);
+
 
 }

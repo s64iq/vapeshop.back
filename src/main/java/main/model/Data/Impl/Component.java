@@ -3,8 +3,12 @@ package main.model.Data.Impl;
 
 import lombok.*;
 import main.model.Data.ProductTypes.ProductWithFeatures;
+import main.model.EProduct;
+import main.model.ProductType;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -28,6 +32,10 @@ public class Component extends ProductWithFeatures {
 
     @Column(length = 1500)
     private String comp;
+
+    @OneToOne
+    @JoinColumn(name = "product_type", referencedColumnName = "id")
+    private ProductType type;
 
     public Component() {
     }

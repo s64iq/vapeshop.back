@@ -19,7 +19,7 @@ public class ModController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/mods/product/")
+    @GetMapping("/mod/product/")
     public Mod getProduct(@RequestHeader("productName") String productName) {
         return modRepository.findByUrlContains(productName)
                 .orElseThrow(() -> new RuntimeException("Error, Mod not found"));

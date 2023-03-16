@@ -19,7 +19,7 @@ public class LiquidController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping("/liquids/product/")
+    @GetMapping("/liquid/product/")
     public Liquid getProduct(@RequestHeader("productName") String productName) {
         return liquidsRepository.findByUrlContains(productName)
                 .orElseThrow(() -> new RuntimeException("Error, Liquid not found"));

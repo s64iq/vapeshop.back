@@ -10,4 +10,7 @@ import java.util.Optional;
 public interface LiquidRepository extends CrudRepository<Liquid,Integer> {
     Optional<Liquid> findByUrlContains(String url);
 
+    Liquid findByIdAllIgnoreCase(int id);
+
+
 }

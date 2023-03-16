@@ -27,6 +27,8 @@ public class ProductService {
 
         products.iterator().forEachRemaining(productList::add);
 
+        productList.sort(Comparator.comparing(Product::getId));
+
         productList = filterData(productList);
         productList.sort(Comparator.comparing(Product::getPrice));
 
@@ -39,6 +41,8 @@ public class ProductService {
         List<Product> productList = new ArrayList<>();
 
         products.iterator().forEachRemaining(productList::add);
+
+        productList.sort(Comparator.comparing(Product::getId));
 
         productList = filterData(productList);
         productList.sort(Comparator.comparing(Product::getPrice).reversed());
@@ -53,6 +57,8 @@ public class ProductService {
 
         products.iterator().forEachRemaining(productList::add);
 
+        productList.sort(Comparator.comparing(Product::getId));
+
         productList = filterData(productList);
 
         size = productList.size();
@@ -64,6 +70,8 @@ public class ProductService {
         List<Product> productList = new ArrayList<>();
 
         products.iterator().forEachRemaining(productList::add);
+
+        productList.sort(Comparator.comparing(Product::getId));
 
         return productList.stream().min(Comparator.comparing(Product::getPrice)).get().getPrice() + ";" +
                 productList.stream().max(Comparator.comparing(Product::getPrice)).get().getPrice();
