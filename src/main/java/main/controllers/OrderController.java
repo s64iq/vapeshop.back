@@ -1,12 +1,10 @@
 package main.controllers;
 
-import main.pojo.OrderRequest;
-import main.pojo.OrderResponse;
+import main.payload.OrderRequest;
+import main.payload.OrderResponse;
 import main.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @CrossOrigin

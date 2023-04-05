@@ -7,7 +7,7 @@ import main.model.ERole;
 import main.model.RefreshToken;
 import main.model.Role;
 import main.model.User;
-import main.pojo.*;
+import main.payload.*;
 import main.repository.RoleRepository;
 import main.repository.UserRepository;
 import main.service.AuthService;

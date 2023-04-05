@@ -1,8 +1,7 @@
-package main.pojo;
+package main.payload;
 
 import lombok.Getter;
 import lombok.Setter;
-import main.model.EProduct;
 import main.model.ProductType;
 import main.model.User;
 

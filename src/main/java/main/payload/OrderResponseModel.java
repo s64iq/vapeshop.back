@@ -1,4 +1,4 @@
-package main.pojo;
+package main.payload;
 
 import lombok.Getter;
 import lombok.Setter;
